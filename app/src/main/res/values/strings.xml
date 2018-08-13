@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">CameraController</string>
+    <string name="connect">Connect</string>
+    <string name="cancel">Cancel</string>
+    <string name="ip_address">IP Address</string>
+    <string name="preference_file_key" translatable="false">com.hixos.cameracontroller.APP_PREFERENCES</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="num_exposures">Number of exposures</string>
+    <string name="exp_time">Exposure time</string>
+    <string name="download_after_exposure">Download after exposure</string>
+    <string name="sequencer">Sequencer</string>
+    <string name="seconds">Seconds</string>
+    <string name="zero_equals_infinity">0 = Infinite</string>
+    <string name="select_ip">Select ip address</string>
+    <string name="configure">Configure</string>
+    <string name="test">Test</string>
+    <string name="shutdown">Shutdown</string>
+    <string name="reboot">Reboot</string>
+    <string name="reconnect">Reconnect</string>
+    <string name="shutdown_confirmation">Are you sure you want to shutdown the Camera Controller?</string>
+    <string name="reboot_confirmation">Are you sure you want to reboot the Camera Controller?</string>
+</resources>
