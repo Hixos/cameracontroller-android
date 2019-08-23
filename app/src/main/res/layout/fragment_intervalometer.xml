@@ -10,7 +10,7 @@
         android:id="@+id/button_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="4dp"
         android:background="@drawable/button_red"
         android:elevation="8dp"
         android:text="@string/stop"
@@ -21,60 +21,56 @@
         android:id="@+id/button_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="2dp"
         android:background="@drawable/button_green"
         android:elevation="8dp"
         android:text="@string/start"
         app:layout_constraintBaseline_toBaselineOf="@+id/button_test"
-        app:layout_constraintStart_toStartOf="@+id/guideline5" />
+        app:layout_constraintStart_toStartOf="@+id/guideline3" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:text="@string/num_exposures"
-        app:layout_constraintEnd_toStartOf="@+id/guideline5"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/edittext_num_exp"
+        app:layout_constraintStart_toStartOf="@+id/edittext_num_exp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
         android:text="@string/exp_time"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline5" />
+        app:layout_constraintEnd_toEndOf="@+id/edittext_exp_time"
+        app:layout_constraintStart_toStartOf="@+id/edittext_exp_time" />
 
     <EditText
         android:id="@+id/edittext_exp_time"
-        android:layout_width="130dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/seconds"
         android:inputType="numberDecimal"
         app:layout_constraintBaseline_toBaselineOf="@+id/edittext_num_exp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline5" />
+        app:layout_constraintStart_toEndOf="@+id/edittext_interval" />
 
     <EditText
         android:id="@+id/edittext_num_exp"
-        android:layout_width="130dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/zero_equals_infinity"
         android:inputType="number"
-        app:layout_constraintEnd_toStartOf="@+id/guideline5"
+        app:layout_constraintEnd_toStartOf="@+id/edittext_interval"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -90,19 +86,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edittext_num_exp" />
 
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5" />
-
     <Button
         android:id="@+id/button_configure"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
         android:text="@string/configure"
         app:layout_constraintEnd_toStartOf="@+id/button_test"
         app:layout_constraintTop_toBottomOf="@+id/checkbox_download" />
@@ -111,9 +100,40 @@
         android:id="@+id/button_test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="2dp"
         android:text="@string/test"
         app:layout_constraintBaseline_toBaselineOf="@+id/button_configure"
-        app:layout_constraintEnd_toStartOf="@+id/guideline5" />
+        app:layout_constraintEnd_toStartOf="@+id/guideline3" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/edittext_interval"
+        app:layout_constraintStart_toStartOf="@+id/edittext_interval"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/interval" />
+
+    <EditText
+        android:id="@+id/edittext_interval"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="@string/seconds"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
 
 </android.support.constraint.ConstraintLayout>

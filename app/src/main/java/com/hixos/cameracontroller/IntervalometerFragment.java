@@ -10,8 +10,6 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,22 +21,23 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.hixos.cameracontroller.R;
 import com.hixos.cameracontroller.commands.Command;
 import com.hixos.cameracontroller.communication.MessageService;
 
-public class SequencerFragment extends Fragment {
+public class IntervalometerFragment extends Fragment {
     private static final String LOGTAG = "SequencerFragment";
 
     private static final String PREF_KEY_DOWNLOAD_AFTER_CAPTURE = "CameraController.DownloadAfterExp";
-    private static final String PREF_KEY_NUM_EXPOSURES = "SequencerFragment.NumExposures";
-    private static final String PREF_KEY_EXP_TIME = "SequencerFragment.ExposureTime";
+    private static final String PREF_KEY_NUM_EXPOSURES = "IntervalometerFragment.NumExposures";
+    private static final String PREF_KEY_INTERVAL = "IntervalometerFragment.Interval";
+    private static final String PREF_KEY_EXP_TIME = "IntervalometerFragment.ExposureTime";
 
     private MessageService mService;
     private boolean mBound = false;
 
     private EditText mEditTextNumExp;
     private EditText mEditTextExpTime;
+    private EditText mEditTextInterval;
     private CheckBox mCheckBoxDownload;
 
     private Button mButtonStart;
@@ -50,6 +49,7 @@ public class SequencerFragment extends Fragment {
 
     private Float mExposureTime = 0.0f;
     private Integer mNumExposures = 1;
+    private Integer mInterval = 10;
     private Boolean mDownload = false;
 
     private MyFocusChangeListener mFocusChangeListener;
@@ -57,12 +57,11 @@ public class SequencerFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_sequencer, container, false);
+        return inflater.inflate(R.layout.fragment_intervalometer, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
         super.onViewCreated(view, savedInstanceState);
         mButtonStart = view.findViewById(R.id.button_start);
         mButtonStop = view.findViewById(R.id.button_stop);
@@ -72,6 +71,7 @@ public class SequencerFragment extends Fragment {
 
         mEditTextExpTime = view.findViewById(R.id.edittext_exp_time);
         mEditTextNumExp = view.findViewById(R.id.edittext_num_exp);
+        mEditTextInterval = view.findViewById(R.id.edittext_interval);
         mCheckBoxDownload = view.findViewById(R.id.checkbox_download);
 
 
@@ -79,7 +79,6 @@ public class SequencerFragment extends Fragment {
 
     @Override
     public void onStart() {
-
         super.onStart();
 
         SharedPreferences pref = getContext().getSharedPreferences(
@@ -87,10 +86,14 @@ public class SequencerFragment extends Fragment {
         mPrefEditor = pref.edit();
         mNumExposures = pref.getInt(PREF_KEY_NUM_EXPOSURES, 1);
         mExposureTime = pref.getFloat(PREF_KEY_EXP_TIME, 0.0f);
+        mInterval = pref.getInt(PREF_KEY_INTERVAL, 10);
         mDownload = pref.getBoolean(PREF_KEY_DOWNLOAD_AFTER_CAPTURE, false);
 
         mEditTextExpTime.setOnFocusChangeListener(mFocusChangeListener);
         mEditTextExpTime.setText(mExposureTime.toString());
+
+        mEditTextInterval.setOnFocusChangeListener(mFocusChangeListener);
+        mEditTextInterval.setText(mInterval.toString());
 
         mEditTextNumExp.setOnFocusChangeListener(mFocusChangeListener);
         mEditTextNumExp.setText(mNumExposures.toString());
@@ -133,9 +136,10 @@ public class SequencerFragment extends Fragment {
 
                 mPrefEditor.putFloat(PREF_KEY_EXP_TIME, mExposureTime);
                 mPrefEditor.putInt(PREF_KEY_NUM_EXPOSURES, mNumExposures);
+                mPrefEditor.putInt(PREF_KEY_INTERVAL, mInterval);
                 mPrefEditor.apply();
 
-                mService.send(Command.setupSequencerCommand(mNumExposures, mExposureTime, mDownload));
+                mService.send(Command.setupIntervalometerCommand(mNumExposures, mInterval, mExposureTime, mDownload));
             }
         });
 
@@ -161,6 +165,7 @@ public class SequencerFragment extends Fragment {
         try{
             mNumExposures = Integer.valueOf(mEditTextNumExp.getText().toString());
             mExposureTime = Float.valueOf(mEditTextExpTime.getText().toString());
+            mInterval = Integer.valueOf(mEditTextInterval.getText().toString());
         }catch (NumberFormatException nfe)
         {
             Log.w(LOGTAG, nfe.getMessage());

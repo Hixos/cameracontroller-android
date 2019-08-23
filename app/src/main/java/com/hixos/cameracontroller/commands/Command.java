@@ -17,6 +17,7 @@ public class Command {
 
     public static final String CMDKEY_CMDID = "cmd_id";
     public static final String CMDKEY_NUM_EXPOSURES = "num_exposures";
+    public static final String CMDKEY_INTERVAL = "interval";
     public static final String CMDKEY_EXPOSURE_TIME = "exposure_time";
     public static final String CMDKEY_DOWNLOAD = "download";
 
@@ -62,6 +63,30 @@ public class Command {
             obj.put(CMDKEY_CMDID, CMD_ID_SEQUENCERSETUP);
             obj.put(CMDKEY_EXPOSURE_TIME, (int)(expTime*1000));
             obj.put(CMDKEY_NUM_EXPOSURES, numExposures);
+            obj.put(CMDKEY_DOWNLOAD, download);
+        }
+        catch (JSONException je)
+        {
+            Log.e(LOGTAG, je.getMessage());
+        }
+
+        try {
+            return generateMessage(obj.toString().getBytes("UTF-8"));
+        }catch (UnsupportedEncodingException uee)
+        {
+            Log.e(LOGTAG, uee.getMessage());
+            return new Message();
+        }
+    }
+
+    public static Message setupIntervalometerCommand(int numExposures, int interval, float expTime, boolean download)
+    {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put(CMDKEY_CMDID, CMD_ID_INTERVALOMETERSETUP);
+            obj.put(CMDKEY_EXPOSURE_TIME, (int)(expTime*1000));
+            obj.put(CMDKEY_NUM_EXPOSURES, numExposures);
+            obj.put(CMDKEY_INTERVAL, interval*1000);
             obj.put(CMDKEY_DOWNLOAD, download);
         }
         catch (JSONException je)

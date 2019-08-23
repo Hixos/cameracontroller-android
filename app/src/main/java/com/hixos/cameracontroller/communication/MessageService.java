@@ -59,31 +59,37 @@ public class MessageService extends Service {
 
     public boolean connect()
     {
+        Log.i(LOGTAG, "Service connect");
         return mTCPClient.connect(this);
     }
 
     public void disconnect()
     {
-         mTCPClient.disconnect();
+        Log.i(LOGTAG, "Service disconnect");
+        mTCPClient.disconnect();
     }
 
     public void registerOnMessageReceivedListener(MessageHandler.OnMessageReceivedListener listener)
     {
+        Log.i(LOGTAG, "Service register onMsgRcv");
         mMessageHandler.registerOnMessageReceivedListener(listener);
     }
 
     public void unRegisterOnMessageReceivedListener(MessageHandler.OnMessageReceivedListener listener)
     {
+        Log.i(LOGTAG, "Service UNregister onMsgRcv");
         mMessageHandler.removeOnMessageReceivedListener(listener);
     }
 
     public void registerOnConnectionListener(ConnectionListener listener)
     {
+        Log.i(LOGTAG, "Service register onConnection");
         mTCPClient.registerConnectionListener(listener);
     }
 
     public void unRegisterOnConnectionListener(ConnectionListener listener)
     {
+        Log.i(LOGTAG, "Service UNregister onConnection");
         mTCPClient.unregisterConnectionListener(listener);
     }
 

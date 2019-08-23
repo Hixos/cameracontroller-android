@@ -10,6 +10,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.design.widget.TabItem;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -34,6 +37,10 @@ import com.hixos.cameracontroller.communication.ConnectionListener;
 import com.hixos.cameracontroller.communication.MessageService;
 import com.hixos.cameracontroller.communication.TCPClient;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import br.com.simplepass.loading_button_lib.interfaces.OnAnimationEndListener;
 
@@ -54,14 +61,14 @@ public class MainActivity extends AppCompatActivity implements IPSelectionDialog
     Handler mHandler = new Handler();
 
    // private ViewGroup mRoot;
-    private View mSequencerView;
+    private View mPagerRootView;
     private ViewGroup mRoot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.w(LOGTAG, "onCreate");
+        Log.w(LOGTAG, "main onCreate");
 
         SharedPreferences pref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
@@ -69,9 +76,22 @@ public class MainActivity extends AppCompatActivity implements IPSelectionDialog
         editor.putInt(TCPClient.PREF_KEY_PORT, PORT);
         editor.apply();
 
-        mSequencerView = findViewById(R.id.fragment_sequencer);
-        mSequencerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
-        mSequencerView.setAlpha(0);
+        TabLayout tabLayout = findViewById(R.id.tablayout);
+        TabItem tabSequencer = findViewById(R.id.tab_sequencer);
+        TabItem tabIntervalometer = findViewById(R.id.tab_intervalometer);
+
+        ViewPager viewPager = findViewById(R.id.viewpager);
+        tabLayout.setupWithViewPager(viewPager);
+
+        PageAdapter pageAdapter = new PageAdapter(getSupportFragmentManager(), this);
+        viewPager.setAdapter(pageAdapter);
+
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        mPagerRootView = findViewById(R.id.pager_root);
+        mPagerRootView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
+        mPagerRootView.setAlpha(0);
+
         mRoot = (ViewGroup)findViewById(R.id.fragment_root);
 
         mButtonConnect = findViewById(R.id.button_connect);
@@ -132,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements IPSelectionDialog
     @Override
     protected void onStart() {
         super.onStart();
-        Log.w(LOGTAG, "onStart");
+        Log.w(LOGTAG, "main onStart");
         Intent i = new Intent(this, MessageService.class);
         bindService(i, mConnection, Context.BIND_AUTO_CREATE);
 
@@ -141,24 +161,23 @@ public class MainActivity extends AppCompatActivity implements IPSelectionDialog
     @Override
     protected void onStop() {
         super.onStop();
+        unbindService(mConnection);
 
-        Log.w(LOGTAG, "onStop");
+        mBound = false;
+        mService = null;
+        Log.w(LOGTAG, "omain nStop");
     }
 
     @Override
     protected void onDestroy() {
 
-        Log.w(LOGTAG, "onDestroy1");
-        unbindService(mConnection);
+        Log.w(LOGTAG, "main onDestroy1");
 
-
-        mBound = false;
-        mService = null;
 
         mButtonConnect.dispose();
-        Log.w(LOGTAG, "onDestroy2");
+        Log.w(LOGTAG, "main onDestroy2");
         super.onDestroy();
-        Log.w(LOGTAG, "onDestroy3");
+        Log.w(LOGTAG, "main onDestroy3");
     }
 
     @Override
@@ -222,13 +241,13 @@ public class MainActivity extends AppCompatActivity implements IPSelectionDialog
     @Override
     protected void onPause() {
         super.onPause();
-        Log.w(LOGTAG, "onPause");
+        Log.w(LOGTAG, "main onPause");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.w(LOGTAG, "onResume");
+        Log.w(LOGTAG, "main onResume");
     }
 
     @Override
@@ -247,6 +266,8 @@ public class MainActivity extends AppCompatActivity implements IPSelectionDialog
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
+            Log.i(LOGTAG, "Main onServiceConnected");
+
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             MessageService.MessageBinder binder = (MessageService.MessageBinder) service;
             mService = binder.getService();
@@ -257,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements IPSelectionDialog
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            Log.w(LOGTAG, "Disconnected");
+            Log.w(LOGTAG, "main OnServiceDisconnected");
             mBound = false;
         }
 
@@ -274,6 +295,8 @@ public class MainActivity extends AppCompatActivity implements IPSelectionDialog
 
     @Override
     public void onConnect() {
+        Log.w(LOGTAG, "main OnConnect");
+
         connectButtonSuccess(R.string.disconnect);
 
         TransitionSet set = new TransitionSet();
@@ -290,9 +313,9 @@ public class MainActivity extends AppCompatActivity implements IPSelectionDialog
 
         TransitionManager.beginDelayedTransition(mRoot, set);
 
-        mSequencerView.setLayoutParams(new LinearLayout.LayoutParams(
+        mPagerRootView.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        mSequencerView.setAlpha(1);
+        mPagerRootView.setAlpha(1);
 
         b.addListener(new Transition.TransitionListener() {
             @Override
@@ -303,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements IPSelectionDialog
             @Override
             public void onTransitionEnd(Transition transition) {
                 Log.d(LOGTAG, "invalidate");
-                mSequencerView.invalidate();
+                mPagerRootView.invalidate();
 
             }
 
@@ -331,7 +354,7 @@ public class MainActivity extends AppCompatActivity implements IPSelectionDialog
 
     @Override
     public void onDisconnect() {
-        Log.w(LOGTAG, "Disconnecting");
+        Log.w(LOGTAG, "Main onDisconnecting");
         connectButtonSuccess(R.string.connect);
 
         TransitionSet set = new TransitionSet();
@@ -348,9 +371,9 @@ public class MainActivity extends AppCompatActivity implements IPSelectionDialog
 
         TransitionManager.beginDelayedTransition(mRoot, set);
 
-        mSequencerView.setLayoutParams(new LinearLayout.LayoutParams(
+        mPagerRootView.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, 1));
-        mSequencerView.setAlpha(0);
+        mPagerRootView.setAlpha(0);
     }
 
     @Override
